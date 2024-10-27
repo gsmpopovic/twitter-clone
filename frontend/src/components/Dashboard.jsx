@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 
-// Register required elements for charts
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const Dashboard = () => {
@@ -24,39 +23,34 @@ const Dashboard = () => {
 
   if (!dashboardData) return <div style={{ textAlign: "center", padding: "20px" }}>Loading...</div>;
 
-  // Define labels for sentiment analysis
   const sentimentLabels = {
     LABEL_0: "Negative",
     LABEL_1: "Neutral",
     LABEL_2: "Positive",
   };
 
-  // Prepare sentiment data for the pie chart
   const sentimentChartData = {
     labels: dashboardData?.sentimentData?.map((item) => sentimentLabels[item.sentiment] || item.sentiment) || [],
     datasets: [
       {
         data: dashboardData?.sentimentData?.map((item) => item.count) || [],
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+        backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 206, 86)"],
       },
     ],
   };
 
-  // Prepare classification data for the bar chart
   const classificationChartData = {
     labels: dashboardData?.classificationData?.map((item) => item.category) || [],
     datasets: [
       {
         label: "# Posts by Category",
         data: dashboardData?.classificationData?.map((item) => item.count) || [],
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#8FD694", "#FF9F40"],
+        backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 206, 86)", "rgb(143, 214, 148)", "rgb(255, 159, 64)"],
       },
     ],
   };
 
   return (
-
-    // Main container for the dashboard
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "2em", textAlign: "center", color: "#333" }}>Dashboard</h1>
 
@@ -67,14 +61,13 @@ const Dashboard = () => {
           <p><strong>Total Posts:</strong> {dashboardData?.totalPosts || "N/A"}</p>
         </div>
 
-      
-        <div style={{ marginBottom: "40px", marginTop: "40px", maxWidth: "600px", maxHeight: "600px", textAlign: "center" }}>
-          <h2 style={{ fontSize: "1.5em", color: "#555" }}>Sentiment Analysis</h2>
+        <div style={{ maxWidth: "600px", maxHeight: "600px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", margin: "20px auto", textAlign: "center" }}>
+          <h2 style={{ fontSize: "1.5em", color: "#555" }}>Post Sentiment Analysis</h2>
           <Pie data={sentimentChartData} options={{ responsive: true, maintainAspectRatio: false }} />
         </div>
       </div>
 
-      <div style={{  marginBottom: "40px", marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "600px", margin: "20px auto" }}>
+      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "600px", margin: "20px auto" }}>
         <h2 style={{ fontSize: "1.5em", color: "#555", textAlign: "center" }}>Sentiment Count Percentage</h2>
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
           <thead>
@@ -98,8 +91,8 @@ const Dashboard = () => {
         </table>
       </div>
 
-      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxHeight: "600px", maxWidth: "600px", margin: "20px auto" }}>
-        <h2 style={{ fontSize: "1.5em", color: "#555", textAlign: "center" }}>Classification Analysis</h2>
+      <div style={{ padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxHeight: "600px", maxWidth: "600px", margin: "20px auto", textAlign: "center" }}>
+        <h2 style={{ fontSize: "1.5em", color: "#555" }}>Post Category Analysis</h2>
         <Bar
           data={classificationChartData}
           options={{

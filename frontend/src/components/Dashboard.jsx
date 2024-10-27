@@ -47,7 +47,7 @@ const Dashboard = () => {
     labels: dashboardData?.classificationData?.map((item) => item.category) || [],
     datasets: [
       {
-        label: "Category Count",
+        label: "# Posts by Category",
         data: dashboardData?.classificationData?.map((item) => item.count) || [],
         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#8FD694", "#FF9F40"],
       },
@@ -55,24 +55,26 @@ const Dashboard = () => {
   };
 
   return (
+
+    // Main container for the dashboard
     <div style={{ padding: "20px", maxWidth: "1200px", margin: "0 auto" }}>
       <h1 style={{ fontSize: "2em", textAlign: "center", color: "#333" }}>Dashboard</h1>
 
-      <div style={{ display: "flex", justifyContent: "space-around", marginTop: "20px" }}>
-        <div style={{ flex: 1, marginRight: "20px" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "20px", marginTop: "20px" }}>
+        <div style={{ flex: 1, textAlign: "center", maxWidth: "600px" }}>
           <h2 style={{ fontSize: "1.5em", color: "#555" }}>Overall Metrics</h2>
           <p><strong>Total Users:</strong> {dashboardData?.totalUsers || "N/A"}</p>
           <p><strong>Total Posts:</strong> {dashboardData?.totalPosts || "N/A"}</p>
-          <p><strong>Total Analyzed Sentiments:</strong> {dashboardData?.totalSentiments || "N/A"}</p>
         </div>
 
-        <div style={{ flex: 2, textAlign: "center" }}>
+      
+        <div style={{ marginBottom: "40px", marginTop: "40px", maxWidth: "600px", maxHeight: "600px", textAlign: "center" }}>
           <h2 style={{ fontSize: "1.5em", color: "#555" }}>Sentiment Analysis</h2>
-          <Pie data={sentimentChartData} />
+          <Pie data={sentimentChartData} options={{ responsive: true, maintainAspectRatio: false }} />
         </div>
       </div>
 
-      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px" }}>
+      <div style={{  marginBottom: "40px", marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "600px", margin: "20px auto" }}>
         <h2 style={{ fontSize: "1.5em", color: "#555", textAlign: "center" }}>Sentiment Count Percentage</h2>
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
           <thead>
@@ -96,7 +98,7 @@ const Dashboard = () => {
         </table>
       </div>
 
-      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px" }}>
+      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxHeight: "600px", maxWidth: "600px", margin: "20px auto" }}>
         <h2 style={{ fontSize: "1.5em", color: "#555", textAlign: "center" }}>Classification Analysis</h2>
         <Bar
           data={classificationChartData}
@@ -111,6 +113,28 @@ const Dashboard = () => {
             },
           }}
         />
+      </div>
+
+      <div style={{ marginTop: "40px", padding: "20px", border: "1px solid #ddd", borderRadius: "8px", maxWidth: "600px", margin: "20px auto" }}>
+        <h2 style={{ fontSize: "1.5em", color: "#555", textAlign: "center" }}>Classification Count Percentage</h2>
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
+          <thead>
+            <tr style={{ backgroundColor: "#f5f5f5" }}>
+              <th style={{ padding: "10px", border: "1px solid #ddd" }}>Category</th>
+              <th style={{ padding: "10px", border: "1px solid #ddd" }}>Count</th>
+              <th style={{ padding: "10px", border: "1px solid #ddd" }}>Percentage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {dashboardData?.classificationData?.map((item, index) => (
+              <tr key={index}>
+                <td style={{ padding: "10px", border: "1px solid #ddd", textAlign: "center" }}>{item.category}</td>
+                <td style={{ padding: "10px", border: "1px solid #ddd", textAlign: "center" }}>{item.count}</td>
+                <td style={{ padding: "10px", border: "1px solid #ddd", textAlign: "center" }}>{item.percentage}%</td>
+              </tr>
+            )) || <tr><td colSpan="3" style={{ textAlign: 'center' }}>No Data Available</td></tr>}
+          </tbody>
+        </table>
       </div>
     </div>
   );

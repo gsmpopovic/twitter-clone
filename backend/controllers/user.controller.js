@@ -4,6 +4,9 @@ import { v2 as cloudinary } from "cloudinary";
 // models
 import Notification from "../models/notification.model.js";
 import User from "../models/user.model.js";
+import Classification from "../models/classification.model.js"; // Assuming Classification is defined in your models
+import Post from "../models/post.model.js"; // Assuming Post is defined in your models
+
 
 export const getUserProfile = async (req, res) => {
 	const { username } = req.params;
@@ -64,22 +67,52 @@ export const getSuggestedUsers = async (req, res) => {
 	try {
 		const userId = req.user._id;
 
-		const usersFollowedByMe = await User.findById(userId).select("following");
+		// Get the user's posts and related classifications
+		const userPosts = await Post.find({ user: userId }).select("_id");
+		const postIds = userPosts.map(post => post._id);
 
-		const users = await User.aggregate([
-			{
-				$match: {
-					_id: { $ne: userId },
+		// Get classifications for these posts
+		let userCategories = [];
+		if (postIds.length > 0) {
+			const classifications = await Classification.find({ postId: { $in: postIds } }).select("categoryId");
+			userCategories = classifications.map(classification => classification.categoryId);
+		}
+
+		// If user has no posts, use default behavior
+		if (userCategories.length === 0) {
+			const usersFollowedByMe = await User.findById(userId).select("following");
+
+			const users = await User.aggregate([
+				{
+					$match: {
+						_id: { $ne: userId },
+					},
 				},
-			},
-			{ $sample: { size: 10 } },
-		]);
+				{ $sample: { size: 10 } },
+			]);
 
-		// 1,2,3,4,5,6,
-		const filteredUsers = users.filter((user) => !usersFollowedByMe.following.includes(user._id));
+			const filteredUsers = users.filter(user => !usersFollowedByMe.following.includes(user._id));
+			const suggestedUsers = filteredUsers.slice(0, 4);
+			suggestedUsers.forEach(user => (user.password = null));
+
+			return res.status(200).json(suggestedUsers);
+		}
+
+		// Otherwise, find users with posts classified under the same categories
+		const similarPosts = await Classification.find({
+			categoryId: { $in: userCategories },
+		}).populate("postId", "user");
+
+		const similarUserIds = Array.from(new Set(similarPosts.map(classification => classification.postId.user.toString())))
+			.filter(id => id !== userId.toString());
+
+		// Fetch user details for similar users
+		const similarUsers = await User.find({ _id: { $in: similarUserIds } }).limit(10);
+		const usersFollowedByMe = await User.findById(userId).select("following");
+		const filteredUsers = similarUsers.filter(user => !usersFollowedByMe.following.includes(user._id));
 		const suggestedUsers = filteredUsers.slice(0, 4);
 
-		suggestedUsers.forEach((user) => (user.password = null));
+		suggestedUsers.forEach(user => (user.password = null));
 
 		res.status(200).json(suggestedUsers);
 	} catch (error) {

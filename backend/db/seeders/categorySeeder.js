@@ -7,7 +7,6 @@ dotenv.config();
 // MongoDB connection URI
 const mongoUri = process.env.MONGO_URI || "mongodb://localhost:27017/yourDatabase";
 
-// Check for existing model definition
 // Predefined meaningful categories array
 const categories = [
   { name: "Personal Development & Wellness", type: "lifestyle" },
@@ -22,11 +21,18 @@ const categories = [
   { name: "Social Issues & Current Events", type: "interest" },
 ];
 
-// Function to populate categories
+// Function to check and insert new categories
 const populateCategories = async () => {
   try {
-    // Insert new categories into the collection
-    await Category.insertMany(categories);
+    for (const category of categories) {
+      const existingCategory = await Category.findOne({ name: category.name });
+      if (!existingCategory) {
+        await Category.create(category);
+        console.log(`Inserted category: ${category.name}`);
+      } else {
+        console.log(`Category already exists: ${category.name}`);
+      }
+    }
     console.log("Categories populated successfully");
   } catch (error) {
     console.error("Error populating categories:", error);

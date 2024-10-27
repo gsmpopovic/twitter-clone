@@ -1,8 +1,7 @@
+import { Fa500Px } from "react-icons/fa";
+
 const WhirlSvg = (props) => (
-	<svg aria-hidden='true' viewBox='0 0 24 24' {...props}>
-	  <path d='M12 2.25c5.25 0 9.75 4.5 9.75 9.75s-4.5 9.75-9.75 9.75S2.25 17.25 2.25 12 6.75 2.25 12 2.25zm-.375 2.25c-4.125 0-7.5 3.375-7.5 7.5s3.375 7.5 7.5 7.5c3.75 0 7.125-2.75 7.5-6.25l-1.5.75c-.25 2.25-2.25 4.125-5.25 4.125-3.125 0-5.75-2.5-5.75-5.75s2.5-5.75 5.75-5.75c1.875 0 3.5 1.25 4.5 3l1.75-.75c-1.25-2.375-3.625-4-6.25-4z' />
-	</svg>
-  );
-  
-  export default WhirlSvg;
-  
+	<Fa500Px aria-hidden="true" {...props} />
+);
+
+export default WhirlSvg;

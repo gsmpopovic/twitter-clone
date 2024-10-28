@@ -1,5 +1,5 @@
 // client/src/pages/dashboard/DashboardPage.js
-import Dashboard from "../../components/Dashboard";
+import Dashboard from "../../components/analytics/Dashboard";
 
 function DashboardPage() {
   return (

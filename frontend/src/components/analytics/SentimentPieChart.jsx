@@ -6,12 +6,27 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const SentimentPieChart = ({ data }) => {
+  const sentimentLabels = {
+    LABEL_2: "Positive",
+    LABEL_1: "Neutral",
+    LABEL_0: "Negative"
+  };
+
+  // Calculate total count for percentage calculation
+  const totalCount = data?.reduce((sum, item) => sum + item.count, 0) || 1;
+
   const chartData = {
-    labels: data?.map((item) => item.label) || [],
+    labels: data?.map(
+      (item) => `${sentimentLabels[item.label]} (${((item.count / totalCount) * 100).toFixed(2)}%)`
+    ) || [],
     datasets: [
       {
         data: data?.map((item) => item.count) || [],
-        backgroundColor: ["rgb(255, 99, 132)", "rgb(54, 162, 235)", "rgb(255, 206, 86)"],
+        backgroundColor: [
+          "rgb(54, 162, 235)", // Positive color
+          "rgb(255, 206, 86)", // Neutral color
+          "rgb(255, 99, 132)"  // Negative color
+        ],
       },
     ],
   };
